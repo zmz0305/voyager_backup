@@ -1,0 +1,166 @@
+// Global variable overrides. Must be declared before importing Valo.
+
+// Defines the plaintext font size, weight and family. Font size affects general component sizing.
+$v-font-size: 13px;
+//$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
+
+// Defines the border used by all components.
+//$v-border: 1px solid (v-shade 0.7);
+//$v-border-radius: 4px;
+
+// Affects the color of some component elements, e.g Button, Panel title, etc
+//$v-background-color: hsl(210, 0%, 98%);
+//$v-background-color: rgba(206,190,190,.9);
+
+// Affects the color of content areas, e.g  Panel and Window content, TextField input etc
+//$v-app-background-color: $v-background-color;
+
+// Affects the visual appearance of all components
+//$v-gradient: v-linear 8%;
+//$v-bevel-depth: 30%;
+//$v-shadow-opacity: 5%;
+
+// Defines colors for indicating status (focus, success, failure)
+// $v-focus-color: valo-focus-color(); // Calculates a suitable color automatically
+$v-focus-color: #BC6154;
+// $v-friendly-color: #2c9720;
+//$v-error-indicator-color: #ed473b;
+
+// For more information, see: https://vaadin.com/book/-/page/themes.valo.html
+// Example variants can be copy/pasted from https://vaadin.com/wiki/-/wiki/Main/Valo+Examples
+
+// $v-focus-style: 0 0 0 0;
+$v-selection-color:  #BC6154;
+@import "../valo/valo.scss";
+@mixin crawler4 {
+  @include valo;
+	.header{
+		background-color:rgba(206,190,190,.9);
+	}
+	
+	.grid{
+		border: 1px solid;
+	}
+	
+	.v-menubar-menuitem {
+		color: #684640 !important;
+		font-weight: 700 !important;
+	}
+
+	.v-menubar-menuitem:hover{
+		border-bottom: 2px solid #684640 !important;
+	}
+
+	.v-menubar {
+		background-image: none !important;
+		border-radius: 0px !important;
+		// border-color: white !important;
+	}
+
+	.v-menubar-selected {
+		border: 10px;
+	}
+
+	.v-menubar:focus {
+		border-radius: 0px !important;
+		border: 1px solid #c5c5c5 !important;
+		border-bottom-color: #bcbcbc !important; 
+		// border-color: white !important;
+	}
+
+	.v-button{
+		margin-left: 2px;
+		// background-color: rgba(206,190,190,.9) !important;
+	}
+
+	.v-textfield {
+		// margin-left: 2px;
+		// margin-top: 2px;
+	}
+
+	.v-captiontext{
+		margin-top: 2px;
+	}
+	a, a:hover{
+		color: blue;
+	}
+
+	.login {
+		margin: 20px;
+		padding: 200px;
+	}
+
+	.v-panel-captionwrap{
+		margin-left: -200px;
+		margin-right: -200px;
+	}
+
+	.loginButton {
+		margin-left: 31%;
+		margin-top: 20px;
+  		margin-bottom: 15px;
+	}
+
+	.window-layout {
+		padding: 10px;
+	}
+
+	.no-toobar .gwt-RichTextToolbar-top{
+		display: none;
+	}
+
+	.no-toobar .gwt-RichTextToolbar-bottom{
+		display: none;
+	}
+
+	.vertical-align-bottom{
+		vertical-align: bottom;
+	}
+
+	.v-slot{
+		vertical-align: middle !important;
+	}
+
+	.v-caption-crawlerstatus-label{
+		padding-left: 10px !important;
+		padding-top: 0.4em !important;
+	}
+
+	.v-grid-tablewrapper {
+		margin-top: 4px;
+	}
+	
+	.horizontalContainer {
+		width: 98px;
+		margin: 0 auto;
+		display: block;
+	}
+	.margin-top {
+		margin-top: 10px;
+	}
+	.list-count{
+		font-size:15px;
+		padding-top:3px
+	}
+	
+	element.style{
+		color: #BC6154;
+		fill: #BC6154;
+	}
+	
+	.highcharts-title{
+		fill: #BC6154 !important;
+	}
+	
+	.crawler4 {
+		border-bottom-color: #BC6154 !important;
+		color: #BC6154 !important;
+	}
+	
+	.v-tabsheet-tabitem-selected {
+		border-bottom-color: #BC6154 !important;
+		color: #BC6154 !important;
+	}
+  // Insert your own theme rules here
+}

@@ -1,0 +1,51 @@
+apply from: 'http://plugins.jasoft.fi/vaadin.plugin'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+repositories {
+   mavenCentral()
+   maven { url 'http://maven.vaadin.com/vaadin-addons' }
+}
+
+configurations {
+    justWar
+}
+
+sourceSets {
+	main{
+		java {
+			srcDir 'src'
+		}
+		resources {
+	        srcDir 'resources'
+	    }
+	}
+	
+}
+
+vaadin {
+	version '7.5.9'
+	//widgetset 'com.illinois.ncsa.cline.voyager.widgetset.VoyagerWidgetset'
+	push = false
+    debug = false
+    profiler = false
+    manageDependencies = true
+    manageWidgetset = false    
+}
+
+dependencies {
+	//compile fileTree(include: ['*.jar'], dir: '../clinedb/lib')
+	//compile fileTree(include: ['*.jar'], dir: '../core/lib')
+	compile fileTree(include: ['*.jar'], dir: '../clinedb/build/lib')
+	compile fileTree(include: ['*.jar'], dir: '../core/lib')
+	compile files('../clinedb/build/lib/clinedb.jar')
+	//compile files('../core/build/lib/core.jar')
+	compile files('../archive/build/lib/archive.jar')
+	//compile files('../core/build/lib/mongo-java-driver-2.12.1.jar')
+	//compile files('../core/build/lib/solr-solrj-4.9.0.jar')
+	compile files('../clinedb/lib/solr-solrj-5.3.0.jar')
+	
+	compile group:'com.vaadin.addon', name:'vaadin-charts', version:'3.0.0'
+	compile group:'org.vaadin.addon', name:'confirmdialog', version:'2.1.3'
+}

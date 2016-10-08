@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="crawler4">
+        <wb-resource deploy-path="/" source-path="/WebContent" tag="defaultRootSource"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/WEB-INF/classes" source-path="/test"/>
+        <dependent-module archiveName="clinedb.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/clinedb/clinedb">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="core.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/core/core">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="noggit-0.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/noggit-0.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="pdfbox-1.8.8.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/pdfbox-1.8.8.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="slf4j-api-1.6.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/slf4j-api-1.6.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="httpmime-4.3.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/httpmime-4.3.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="httpclient-cache-4.3.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/httpclient-cache-4.3.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="slf4j-log4j12-1.6.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/slf4j-log4j12-1.6.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="c3p0-0.9.2-pre4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/c3p0-0.9.2-pre4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="fontbox-1.8.8.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/fontbox-1.8.8.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="httpclient-4.3.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/httpclient-4.3.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="zookeeper-3.4.5.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/zookeeper-3.4.5.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jcl-over-slf4j-1.6.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/jcl-over-slf4j-1.6.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mysql-connector-java-5.1.20-bin.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/mysql-connector-java-5.1.20-bin.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-lang3-3.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/commons-lang3-3.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="opencsv-2.3.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/opencsv-2.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="dom4j-1.6.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/dom4j-1.6.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="jul-to-slf4j-1.6.6.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/jul-to-slf4j-1.6.6.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="gson-2.2.4.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/gson-2.2.4.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="log4j-1.2.16.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/log4j-1.2.16.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="commons-io-2.1.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/commons-io-2.1.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="wstx-asl-3.2.7.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/wstx-asl-3.2.7.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="mchange-commons-java-0.2.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/mchange-commons-java-0.2.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="trove4j-3.0.3.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/trove4j-3.0.3.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="httpcore-4.3.2.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/clinedb/lib/httpcore-4.3.2.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <property name="java-output-path" value="/crawler4/build/classes"/>
+        <property name="context-root" value="crawler4"/>
+    </wb-module>
+</project-modules>

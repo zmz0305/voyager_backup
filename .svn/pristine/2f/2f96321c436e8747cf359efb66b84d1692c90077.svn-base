@@ -1,0 +1,264 @@
+package edu.illinois.ncsa.cline.voyager;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Set;
+
+import java_cup.internal_error;
+
+import com.google.gwt.thirdparty.javascript.jscomp.regex.CaseCanonicalize;
+import com.thoughtworks.selenium.webdriven.commands.Refresh;
+import com.vaadin.data.Property.ValueChangeEvent;
+import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.TextField;
+import com.vaadin.ui.VerticalLayout;
+
+import edu.illinois.ncsa.cline.database.CrawlStatsReader;
+import edu.illinois.ncsa.cline.database.shared.FeedStats;
+import edu.illinois.ncsa.cline.database.shared.FeedStatsDaily;
+import edu.illinois.ncsa.cline.helpers.FeedStatsCache;
+import edu.illinois.ncsa.cline.helpers.TimeWindow;
+import edu.illinois.ncsa.cline.helpers.feedstatsAttributes;
+import edu.illinois.ncsa.cline.voyager.charts.MultiFeedStatsLine;
+
+/**
+ * this view is for various statistical plots
+ * @author zmz0305
+ */
+public class FeedsPlots extends HorizontalSplitPanel implements View {
+    /** frequency for time window */
+    private long[] frequency = { 1000 * 60 * 60 * 24 };
+
+    /** size for each frequency for time window */
+    private int[] sizes = { 365 };
+
+    /** feedstats cache */
+    private FeedStatsCache cache = (FeedStatsCache) VaadinSession.getCurrent().getSession().getAttribute("cache");
+
+    /** the left part wrapper */
+    private VerticalLayout leftWrapper = new VerticalLayout();
+
+    /** the right part wrapper */
+    private VerticalLayout rightWrapper = new VerticalLayout();
+
+    /** all the feedstats data */
+    private ArrayList<FeedStats> data;
+
+    /** text field for filter text */
+    private TextField filter = new TextField();
+
+    /** the table for feedslist */
+    private Table feedslist = new Table();
+
+    /** for display all feedstats attributes */
+    private ComboBox attributes;
+
+    /** the selected attribute */
+    //    private feedstatsAttributes selectedAttribute = feedstatsAttributes.irrelevant;
+
+    /** a list of selected attributes */
+    private ArrayList<feedstatsAttributes> selectedAttributes = new ArrayList<feedstatsAttributes>();
+
+    /** the chart to display */
+    private Component chart;
+
+    /** a list of list of feedStatsDaily, e.g. for a feed: http://www.google.com, we have a list of 
+     *  feedstats at various date (ArrayList<FeedStatsDaily>) and then for each feed we have this list
+     */
+    private ArrayList<ArrayList<FeedStatsDaily>> allFsdList = new ArrayList<ArrayList<FeedStatsDaily>>();
+
+    /** outter list is for each feed, inner list is for each selected feedstatsAttribute of this feed */
+    private ArrayList<ArrayList<TimeWindow>> windowsList = new ArrayList<ArrayList<TimeWindow>>();
+
+    /** the list of chosen feeds' urls */
+    private ArrayList<String> urls = new ArrayList<String>();
+
+    /** selected rowids from the table */
+    private Set<Integer> rowids;
+
+    /**
+     * constructor
+     */
+    public FeedsPlots() {
+        setFirstComponent(leftWrapper);
+        setSecondComponent(rightWrapper);
+        setSplitPosition(30);
+
+        selectedAttributes.add(feedstatsAttributes.irrelevant);
+        selectedAttributes.add(feedstatsAttributes.duplicate);
+        selectedAttributes.add(feedstatsAttributes.relevant);
+
+        configureComponents();
+        addToWrapper();
+        addListeners();
+    }
+
+    /**
+     * helper function to gether all add to main wrapper actions
+     */
+    private void addToWrapper() {
+        leftWrapper.addComponent(filter);
+        leftWrapper.addComponent(feedslist);
+        rightWrapper.addComponent(attributes);
+    }
+
+    private void configureComponents() {
+
+        // configure the table 
+        feedslist.setSizeFull();
+        feedslist.setHeight("100%");
+        feedslist.setMultiSelect(true);
+        feedslist.addContainerProperty("URL", String.class, null);
+
+        // initialize data
+        if (cache.getData() != null) {
+            data = cache.getData();
+        } else {
+            try {
+                cache.create(1);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        // load data to table
+        for (FeedStats fs : data) {
+            int id = fs.getRowid();
+            feedslist.addItem(new Object[] { fs.getUrl() }, id);
+        }
+
+        // configure combo box
+        ArrayList<String> attrs = new ArrayList<String>();
+        for (feedstatsAttributes attr : feedstatsAttributes.values()) {
+            attrs.add(attr.toString());
+        }
+        attributes = new ComboBox("Attribute to compare", attrs);
+
+    }
+
+    private void addListeners() {
+        feedslist.addValueChangeListener(new ValueChangeListener() {
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                rowids = (Set<Integer>) event.getProperty().getValue();
+                refreshChart(rowids);
+            }
+        });
+
+        attributes.addValueChangeListener(new ValueChangeListener() {
+
+            @Override
+            public void valueChange(ValueChangeEvent event) {
+                //                selectedAttribute = feedstatsAttributes.valueOf(event.getProperty().getValue().toString());
+                refreshChart(rowids);
+            }
+        });
+    }
+
+    private void refreshChart(Set<Integer> rowids) {
+        allFsdList.clear();
+        urls.clear();
+        windowsList.clear();
+        ArrayList<FeedStatsDaily> fsdList;
+        long end = System.currentTimeMillis();
+        long start = end - 365 * 24 * 60 * 60 * 1000L;
+        String url = new String();
+        for (int id : rowids) {
+            try {
+                url = CrawlStatsReader.getUrl(id);
+                fsdList = CrawlStatsReader.getStats(new Date(start), new Date(end), id, url);
+                urls.add(url);
+                allFsdList.add(fsdList);
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        for (ArrayList<FeedStatsDaily> fsds : allFsdList) {
+            ArrayList<TimeWindow> windows = new ArrayList<TimeWindow>();
+            for (feedstatsAttributes selectedAttribute : selectedAttributes) {
+                TimeWindow window = new TimeWindow(frequency, sizes, start);
+                for (FeedStatsDaily fs : fsds) {
+                    long timestamp = fs.getDate().getTime();
+                    switch (selectedAttribute) {
+                        case scans:
+                            window.update(fs.getScans(), timestamp);
+                            break;
+                        case changed:
+                            window.update(fs.getChanged(), timestamp);
+                            break;
+                        case unchanged:
+                            window.update(fs.getUnchanged(), timestamp);
+                            break;
+                        case failures:
+                            window.update(fs.getFailures(), timestamp);
+                            break;
+                        case dup_urls:
+                            window.update(fs.getDup_urls(), timestamp);
+                            break;
+                        case pages:
+                            window.update(fs.getPages(), timestamp);
+                            break;
+                        case relevant:
+                            window.update(fs.getRelevant(), timestamp);
+                            break;
+                        case irrelevant:
+                            window.update(fs.getIrrelevant(), timestamp);
+                            break;
+                        case excluded:
+                            window.update(fs.getExcluded(), timestamp);
+                            break;
+                        case empty:
+                            window.update(fs.getEmpty(), timestamp);
+                            break;
+                        case unparsable:
+                            window.update(fs.getUnparsable(), timestamp);
+                            break;
+                        case foreign_language:
+                            window.update(fs.getForeign_language(), timestamp);
+                            break;
+                        case corrupted:
+                            window.update(fs.getCorrupted(), timestamp);
+                            break;
+                        case duplicate:
+                            window.update(fs.getDuplicate(), timestamp);
+                            break;
+                        case nocontent:
+                            window.update(fs.getNocontent(), timestamp);
+                            break;
+                        case rowid:
+                            window.update(fs.getRowid(), timestamp);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                windows.add(window);
+            }
+            windowsList.add(windows);
+        }
+
+        if (chart != null) {
+            rightWrapper.removeComponent(chart);
+        }
+        chart = MultiFeedStatsLine.getChart(windowsList, urls, selectedAttributes);
+        rightWrapper.addComponent(chart);
+    }
+
+    @Override
+    public void enter(ViewChangeEvent event) {
+        // TODO Auto-generated method stub
+
+    }
+
+}

@@ -1,0 +1,228 @@
+package edu.illinois.ncsa.cline.voyager;
+
+import java.util.ArrayList;
+
+import com.vaadin.data.Item;
+import com.vaadin.data.util.BeanItemContainer;
+import com.vaadin.data.util.GeneratedPropertyContainer;
+import com.vaadin.data.util.PropertyValueGenerator;
+import com.vaadin.navigator.View;
+import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickEvent;
+import com.vaadin.ui.Button.ClickListener;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ButtonRenderer;
+
+import edu.illinois.ncsa.cline.database.shared.IngestionLog;
+import edu.illinois.ncsa.cline.helpers.IngestionLogCache;
+import edu.illinois.ncsa.cline.voyager.subwindows.AddIngestionWindow;
+import edu.illinois.ncsa.cline.voyager.subwindows.EditIngestionWindow;
+import edu.illinois.ncsa.cline.voyager.subwindows.IngestionDetailWindow;
+import edu.illinois.ncsa.cline.voyager.subwindows.IngestionPropertiesWindow;
+
+/**
+ * page for ingestion logs
+ * @author zmz0305
+ */
+@SuppressWarnings("serial")
+public class IngestionListing extends VerticalLayout implements View {
+
+    /** grid for listing ingestions*/
+    Grid ingestionList = new Grid();
+
+    /** add ingestion button */
+    Button addIngestionButton = new Button("Add");
+
+    /** wrapper for row above the ingestionList grid */
+    HorizontalLayout buttonsHorizontalLayout = new HorizontalLayout();
+
+    /** container for the grid */
+    BeanItemContainer<IngestionLog> container = new BeanItemContainer<IngestionLog>(IngestionLog.class);
+
+    /** i t s el f */
+    IngestionListing instance = this;
+
+    /** data for databinding */
+    ArrayList<IngestionLog> logData;
+
+    /** cache for ingestion log */
+    IngestionLogCache cache = (IngestionLogCache) VaadinSession.getCurrent().getSession().getAttribute("ingestionCache");
+
+    /** */
+    final static String NAME = "name";
+    /** */
+    final static String OWNER = "owner";
+    /** */
+    final static String STEWARD = "steward";
+    /** */
+    final static String DESCRIPTION = "description";
+    /** */
+    final static String SOURCE = "source";
+    /** */
+    final static String RIGHTS = "rights";
+    /** */
+    final static String ORIGINATION = "origination";
+    /** */
+    final static String BEGIN_DATE = "beginDate";
+    /** */
+    final static String END_DATE = "endDate";
+    /** */
+    final static String INGESTED_DATE = "ingestedDate";
+    /** */
+    final static String OBJECT_ID = "objectId";
+
+    /**
+     * constructor
+     */
+    public IngestionListing() {
+        setSizeFull();
+        configureComponents();
+        setListners();
+        addToWrapper();
+        setExpandRatio(buttonsHorizontalLayout, 0);
+        setExpandRatio(ingestionList, 1);
+    }
+
+    /**
+     * wrapper function
+     */
+    private void addToWrapper() {
+        addComponent(buttonsHorizontalLayout);
+        addComponent(ingestionList);
+    }
+
+    /**
+     * wrapper function
+     */
+    private void configureComponents() {
+        buttonsHorizontalLayout.addComponent(addIngestionButton);
+        GeneratedPropertyContainer containerWrapper = new GeneratedPropertyContainer(container);
+
+        cache.create();
+        logData = cache.getData();
+        container.addAll(logData);
+        ingestionList.setSelectionMode(SelectionMode.NONE);
+        ingestionList.setSizeFull();
+        ingestionList.setContainerDataSource(containerWrapper);
+
+        // !!!notice the order here:
+        // addGeneratedProperty first, then remove all columns and add column, then render button
+        // otherwise will not work
+        containerWrapper.addGeneratedProperty("Check Content", new PropertyValueGenerator<String>() {
+
+            @Override
+            public String getValue(Item item, Object itemId, Object propertyId) {
+                return "Check Content";
+            }
+
+            @Override
+            public Class<String> getType() {
+                return String.class;
+            }
+
+        });
+        
+        // button for showing details
+        containerWrapper.addGeneratedProperty("Detail", new PropertyValueGenerator<String>() {
+
+            @Override
+            public String getValue(Item item, Object itemId, Object propertyId) {
+                return "Detail";
+            }
+
+            @Override
+            public Class<String> getType() {
+                return String.class;
+            }
+
+        });
+        
+        //  button for edit
+        containerWrapper.addGeneratedProperty("Edit", new PropertyValueGenerator<String>() {
+
+            @Override
+            public String getValue(Item item, Object itemId, Object propertyId) {
+                return "Edit";
+            }
+
+            @Override
+            public Class<String> getType() {
+                return String.class;
+            }
+
+        });
+        
+        // remove all columns then re-add them
+        ingestionList.removeAllColumns();
+        ingestionList.addColumn(NAME);
+        ingestionList.addColumn(OWNER);
+        ingestionList.addColumn(STEWARD);
+        ingestionList.addColumn(SOURCE);
+        ingestionList.addColumn(RIGHTS);
+        ingestionList.addColumn(ORIGINATION);
+        ingestionList.addColumn(INGESTED_DATE);
+        ingestionList.addColumn(BEGIN_DATE);
+        ingestionList.addColumn(END_DATE);
+        ingestionList.addColumn(OBJECT_ID);
+        ingestionList.addColumn("Detail");
+        ingestionList.addColumn("Check Content");
+        ingestionList.addColumn("Edit");
+
+        // render the buttons
+        ingestionList.getColumn("Detail").setRenderer(new ButtonRenderer(event -> {
+            IngestionPropertiesWindow propertiesWindow = new IngestionPropertiesWindow((IngestionLog) event.getItemId());
+            propertiesWindow.center();
+            UI.getCurrent().addWindow(propertiesWindow);
+        }));
+        ingestionList.getColumn("Check Content").setRenderer(new ButtonRenderer(event -> {
+            Notification.show(((IngestionLog) event.getItemId()).getObjectId().toString());
+            IngestionDetailWindow detailWindow = new IngestionDetailWindow(((IngestionLog) event.getItemId()).getObjectId());
+            detailWindow.center();
+            UI.getCurrent().addWindow(detailWindow);
+        }));
+        ingestionList.getColumn("Edit").setRenderer(new ButtonRenderer(event -> {
+            Notification.show(((IngestionLog) event.getItemId()).getObjectId().toString());
+            EditIngestionWindow editIngestionlWindow = new EditIngestionWindow(instance, (IngestionLog)event.getItemId());
+            editIngestionlWindow.center();
+            UI.getCurrent().addWindow(editIngestionlWindow);
+        }));
+    }
+
+    /**
+     * wrapper function
+     */
+    private void setListners() {
+        addIngestionButton.addClickListener(new ClickListener() {
+            @Override
+            public void buttonClick(ClickEvent event) {
+                AddIngestionWindow addIngestionWindow = new AddIngestionWindow(instance);
+                addIngestionWindow.center();
+                UI.getCurrent().addWindow(addIngestionWindow);
+            }
+        });
+
+    }
+    
+    /**
+     * refresh table content
+     */
+    public void refreshGrid() {
+        logData = cache.getData();
+        container.removeAllItems();
+        container.addAll(logData);
+    }
+
+    @Override
+    public void enter(ViewChangeEvent event) {
+        // TODO Auto-generated method stub
+
+    }
+
+}

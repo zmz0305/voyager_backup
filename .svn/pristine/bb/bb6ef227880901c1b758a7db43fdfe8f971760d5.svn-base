@@ -1,0 +1,21 @@
+package edu.illinois.ncsa.cline.helpers;
+
+public enum feedstatsAttributes {
+    url,
+    scans,
+    changed,
+    unchanged,
+    failures,
+    dup_urls,
+    pages,
+    relevant,
+    irrelevant,
+    excluded,
+    empty,
+    unparsable,
+    foreign_language,
+    corrupted,
+    duplicate,
+    nocontent,
+    rowid
+}

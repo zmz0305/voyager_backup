@@ -1,0 +1,25 @@
+package edu.illinois.ncsa.cline.helpers;
+
+import java.util.Date;
+import java.util.HashMap;
+
+public class TimeWindowsCache {
+    /** frequency for time window */
+    private long[] frequency = {1000*60*60*24};
+    
+    /** size for each frequency for time window */
+    private int[] sizes = {365};
+    
+    HashMap<feedstatsAttributes, TimeWindow> windows;
+    
+    
+    public TimeWindowsCache(){
+        long currentDateMs = System.currentTimeMillis();
+        Date currentDate = new Date(currentDateMs);
+        
+        for(feedstatsAttributes attr : feedstatsAttributes.values()){
+//            windows
+        }
+        
+    }
+}
